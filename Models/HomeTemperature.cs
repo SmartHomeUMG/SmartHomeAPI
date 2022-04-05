@@ -1,8 +1,30 @@
-namespace SmartBuilding.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace smartBuilding.Models;
 
 public class HomeTemperature
 {
     public int Id {get;set;}
-    public int TemperatureC {get;set;}
-    public DateTime measureDate {get;set;}
+    private int _TemperatureC;
+    public int TemperatureC
+    {
+        get
+        {
+            return _TemperatureC;
+        }
+        set
+        {
+            _TemperatureC = value;  
+        }
+    }
+        
+    
+    private DateTime _MeasureDate = DateTime.Now;
+    public DateTime MeasureDate {get;set;}
+    // {
+    //     get
+    //     {
+    //         return _MeasureDate; 
+    //     }
+    // }
 }

@@ -1,3 +1,7 @@
 Migrations/
 obj/
 bin/
+.vscode/
+smartbuilding.db
+smartbuilding.db-shm
+smartbuilding.db-wal
