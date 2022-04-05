@@ -17,14 +17,7 @@ public class HomeTemperature
             _TemperatureC = value;  
         }
     }
-        
-    
+           
     private DateTime _MeasureDate = DateTime.Now;
     public DateTime MeasureDate {get;set;}
-    // {
-    //     get
-    //     {
-    //         return _MeasureDate; 
-    //     }
-    // }
 }
