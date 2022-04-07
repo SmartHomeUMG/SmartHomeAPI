@@ -6,5 +6,4 @@ public class HomePresences
     public bool isPresent {get;set;}
     public DateTime CheckIn {get;set;}
     public Householders Householder {get;set;}
-    
 }
