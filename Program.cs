@@ -52,4 +52,19 @@ app.MapPost("/temperatures", async (SmartBuildingDb db, HomeTemperature temperat
 
 app.MapGet("/temperatures/recent", () => recent);
 
+app.MapPost("/homeholders/person/add", async (SmartBuildingDb db, Householders hs) =>{
+   await db.Homeholders.AddAsync(hs);
+   await db.SaveChangesAsync();
+   return Results.Accepted();
+});
+
+app.MapPost("/homeholders/group/add", async (SmartBuildingDb db, IEnumerable<Householders> hsList) => {
+   await db.Homeholders.AddRangeAsync(hsList);
+   await db.SaveChangesAsync();
+   return Results.Accepted();
+});
+
+app.MapPost("/householders/identify", async (SmartBuildingDb db, string code) => 
+ await db.Homeholders.FirstAsync(hs => hs.IdentifyCode == code) != null);
+
 app.Run();
