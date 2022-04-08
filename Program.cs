@@ -40,7 +40,7 @@ app.MapGet("/temperatures/recents", async (SmartBuildingDb db) => await db.Tempe
 //localhost:5108/temperatures/period/2022-04-01,2022-04-06
 app.MapGet("/temperatures/period/{start:datetime},{stop:datetime}", async(SmartBuildingDb db, DateTime start, DateTime stop) => await db.Temperatures.Where(t => t.MeasureDate < stop && t.MeasureDate > start).ToListAsync());
 
-HomeTemperature recent = null;
+HomeTemperature recent = new HomeTemperature();
 
 app.MapPost("/temperatures", async (SmartBuildingDb db, HomeTemperature temperature) => {
    temperature.MeasureDate = DateTime.Now;
@@ -52,4 +52,19 @@ app.MapPost("/temperatures", async (SmartBuildingDb db, HomeTemperature temperat
 
 app.MapGet("/temperatures/recent", () => recent);
 
+app.MapGet("/temperatures/alarm", (int temperature) => temperature >= 40);
+
+app.MapPost("/homeholders/person/add", async (SmartBuildingDb db, Householders hs) =>{
+   await db.Homeholders.AddAsync(hs);
+   await db.SaveChangesAsync();
+   return Results.Accepted();
+});
+
+app.MapPost("/homeholders/group/add", async (SmartBuildingDb db, IEnumerable<Householders> hsList) => {
+   await db.Homeholders.AddRangeAsync(hsList);
+   await db.SaveChangesAsync();
+   return Results.Accepted();
+});
+
+app.MapPost("/householders/identify/ishomeholder", (SmartBuildingDb db, string code) => smartBuilding.Helpers.HomeholderHelper.IsHomeHolder(db,code));
 app.Run();
