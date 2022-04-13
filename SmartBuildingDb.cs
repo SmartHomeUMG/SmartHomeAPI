@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using smartBuilding.Models;
 
 namespace smartBuilding;
-class SmartBuildingDb : DbContext
+public class SmartBuildingDb : DbContext
 {
-    public SmartBuildingDb(DbContextOptions options) : base(options) { }
-    public DbSet<HomeTemperature> Temperatures { get; set; }
-    public DbSet<Householders> Homeholders {get;set;}
-    public DbSet<HomePresences> HomePresences {get;set;}
+    public SmartBuildingDb(DbContextOptions<SmartBuildingDb> options) : base(options) { }
+    public virtual DbSet<HomeTemperature> Temperatures { get; set; }
+    public virtual DbSet<Householders> Homeholders {get;set;}
+    public virtual DbSet<HomePresences> HomePresences {get;set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
