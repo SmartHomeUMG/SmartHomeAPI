@@ -51,8 +51,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapGet("/", () => "Hello World!");
-//localhost:5108/temperatures/period/2022-04-01,2022-04-06
-app.MapGet("/temperatures/period/{start:datetime},{stop:datetime}", async(SmartBuildingDb db, DateTime start, DateTime stop) => await db.Temperatures.Where(t => t.MeasureDate < stop && t.MeasureDate > start).ToListAsync());
 
 app.MapPost("/homeholders/person/add", async (SmartBuildingDb db, Householders hs) =>{
    await db.Homeholders.AddAsync(hs);

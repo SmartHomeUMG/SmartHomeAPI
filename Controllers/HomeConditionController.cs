@@ -24,14 +24,20 @@ public class HomeConditionController : ControllerBase
     public async Task<IEnumerable<HomeTemperature>> Get()
     {
         return await _iHomeConditionRepository.GetTemperatures();
-    } 
+    }
+
+    //localhost:5108/HomeCondition/GetTemperatureDuringTime?start=2022-04-01&&stop=2022-04-14
+    [HttpGet]
+    [Route("[controller]/[action]")]
+    public async Task<IEnumerable<HomeTemperature>> GetTemperatureDuringTime(DateTime start, DateTime stop) => 
+    await _iHomeConditionRepository.GetTemperatures(start,stop); 
 
     [HttpGet]
     [Route("[controller]/[action]")]
     public HomeTemperature RecentTemperature() => HomeConditionRepository.Recent;
 
     [HttpPost]
-    [Route("[controller]")]
+    [Route("[controller]/Temperature")]
     public async Task<IActionResult> Post([FromBody] HomeTemperature temperatureC)
     {
         await _iHomeConditionRepository.AddTemperature(temperatureC);
