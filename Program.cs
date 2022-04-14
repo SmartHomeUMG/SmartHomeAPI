@@ -66,13 +66,9 @@ app.MapPost("/homeholders/group/add", async (SmartBuildingDb db, IEnumerable<Hou
    return Results.Accepted();
 });
 
-<<<<<<< HEAD
 app.MapPost("/householders/identify", async (SmartBuildingDb db, string code) => 
  await db.Homeholders.FirstAsync(hs => hs.IdentifyCode == code) != null);
 
 app.MapHub<HomeConditionHub>("/HomeConditionHub");
 
-=======
-app.MapPost("/householders/identify/ishomeholder", (SmartBuildingDb db, string code) => smartBuilding.Helpers.HomeholderHelper.IsHomeHolder(db,code));
->>>>>>> f10374290de46c5a0e12f0f4eb90e7c502293350
 app.Run();

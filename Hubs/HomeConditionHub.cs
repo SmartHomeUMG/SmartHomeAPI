@@ -8,7 +8,7 @@ namespace smartBuilding.Hubs;
 
 public class HomeConditionHub : Hub
 {
-    private static const int _RefrashDelay = 5000;
+    private static int _RefrashDelay = 5000;
     public async IAsyncEnumerable<HomeTemperature> RecentTemperature(CancellationToken stopToken)
     {
         while(! stopToken.IsCancellationRequested)
