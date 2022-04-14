@@ -11,7 +11,7 @@ public class SmartBuildingDb : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<HomePresences>().HasOne(hp => hp.Householder);
+        modelBuilder.Entity<HomePresences>().HasOne(hp => hp.Householder).WithMany(hh => hh.HomePresences);
     }
     
 }

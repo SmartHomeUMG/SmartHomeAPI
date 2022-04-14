@@ -6,4 +6,6 @@ public class Householders
     public string Name {get;set;}
     public string IdentifyCode {get;set;}
 
+    public List<HomePresences> HomePresences {get;set;}
+
 }
