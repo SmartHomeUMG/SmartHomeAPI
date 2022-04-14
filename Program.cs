@@ -3,15 +3,27 @@ using Microsoft.EntityFrameworkCore;
 
 using smartBuilding;
 using smartBuilding.Models;
+using smartBuilding.Hubs;
+using smartBuilding.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("SmartBuilding") ?? "Data Source=smartbuilding.db";
+
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSqlite<SmartBuildingDb>(connectionString);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSignalR();
+builder.Services.AddCors( options => {
+   options.AddPolicy("CorsPolicy",builder => builder
+   .WithOrigins("http://localhost:28096")
+   .AllowAnyHeader()
+   .AllowAnyMethod()
+   .AllowCredentials()
+   );
+});
 builder.Services.AddSwaggerGen(c =>
 {
    c.SwaggerDoc("v1", new OpenApiInfo {
@@ -20,8 +32,12 @@ builder.Services.AddSwaggerGen(c =>
       Version = "v1" });
 });
 
+//register own services
+builder.Services.AddScoped<IHomeConditionRepository, HomeConditionRepository>();
+
 var app = builder.Build();
 
+app.UseCors("CorsPolicy");
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -35,22 +51,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapGet("/", () => "Hello World!");
-app.MapGet("/temperatures", async (SmartBuildingDb db) => await db.Temperatures.ToListAsync());
-app.MapGet("/temperatures/recents", async (SmartBuildingDb db) => await db.Temperatures.Where(t => t.MeasureDate <= DateTime.Now).ToListAsync());
-//localhost:5108/temperatures/period/2022-04-01,2022-04-06
-app.MapGet("/temperatures/period/{start:datetime},{stop:datetime}", async(SmartBuildingDb db, DateTime start, DateTime stop) => await db.Temperatures.Where(t => t.MeasureDate < stop && t.MeasureDate > start).ToListAsync());
-
-HomeTemperature recent = new HomeTemperature();
-
-app.MapPost("/temperatures", async (SmartBuildingDb db, HomeTemperature temperature) => {
-   temperature.MeasureDate = DateTime.Now;
-   await db.Temperatures.AddAsync(temperature);
-   await db.SaveChangesAsync();
-   recent = temperature;
-   return Results.Created($"",temperature);
-});
-
-app.MapGet("/temperatures/recent", () => recent);
 
 app.MapGet("/temperatures/alarm", (int temperature) => temperature >= 40);
 
@@ -66,5 +66,9 @@ app.MapPost("/homeholders/group/add", async (SmartBuildingDb db, IEnumerable<Hou
    return Results.Accepted();
 });
 
-app.MapPost("/householders/identify/ishomeholder", (SmartBuildingDb db, string code) => smartBuilding.Helpers.HomeholderHelper.IsHomeHolder(db,code));
+app.MapPost("/householders/identify", async (SmartBuildingDb db, string code) => 
+ await db.Homeholders.FirstAsync(hs => hs.IdentifyCode == code) != null);
+
+app.MapHub<HomeConditionHub>("/HomeConditionHub");
+
 app.Run();
