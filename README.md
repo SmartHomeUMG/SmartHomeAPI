@@ -11,3 +11,30 @@ Information collected:
 - Sqlite
 - .NET 6 SDK & Runtime
 - Postman (for API testing) 
+
+## ENDPOINTS:
+
+### Add temperature:
+#### Method GET:
+`localhost:5108/HomeCondition/Temperature/Add?temperatureC=31`
+### Get recent temperature:
+#### Method GET:
+`localhost:5108/HomeCondition/RecentTemperature`
+### Get collection of tempertutes between 2 dates:
+#### Method GET:
+`localhost:5108/HomeCondition/GetTemperatureDuringTime?start=2022-04-01&&stop=2022-04-21`
+
+### Switch on light:
+#### Method POST:
+`localhost:5108/HomeLight/ChangeLightStatus`
+
+Body:
+`
+{
+    "TurnedOn":true
+}
+`
+### Get current light status:
+
+#### Method GET:
+`localhost:5108/HomeLight/GetLightStatus`
