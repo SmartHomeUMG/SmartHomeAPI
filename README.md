@@ -37,4 +37,16 @@ Body:
 ### Get current light status:
 
 #### Method GET:
+REQUEST:
+
 `localhost:5108/HomeLight/GetLightStatus`
+
+RESPONSE:
+
+`
+{
+    "turnedOn": true,
+    "date": "2022-04-20T10:51:24.9630195"
+}
+`
+
