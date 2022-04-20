@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using smartBuilding.Repositories;
 using smartBuilding.Models;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace smartBuilding.Controllers;
 
@@ -11,12 +12,14 @@ public class HomeConditionController : ControllerBase
    
 
     private readonly ILogger<HomeConditionController> _logger;
+    private readonly IMemoryCache _memoryCache;
     private readonly IHomeConditionRepository _iHomeConditionRepository;
 
-    public HomeConditionController(ILogger<HomeConditionController> logger, IHomeConditionRepository homeRepository)
+    public HomeConditionController(ILogger<HomeConditionController> logger, IMemoryCache _memCache, IHomeConditionRepository homeRepository)
     {
         _logger = logger;
         _iHomeConditionRepository = homeRepository;
+        _memoryCache = _memCache;
     }
     
     [HttpGet]
@@ -34,13 +37,44 @@ public class HomeConditionController : ControllerBase
 
     [HttpGet]
     [Route("[controller]/[action]")]
-    public HomeTemperature RecentTemperature() => HomeConditionRepository.Recent;
-
-    [HttpPost]
-    [Route("[controller]/Temperature")]
-    public async Task<IActionResult> Post([FromBody] HomeTemperature temperatureC)
+    public async Task<ActionResult<int>> RecentTemperature()
     {
+        var cacheKey = "recentTemperature";
+        if(! _memoryCache.TryGetValue(cacheKey, out int ht))
+        {
+            ht = (await _iHomeConditionRepository.GetRecentTemperature()).TemperatureC;
+            var cacheExpiryOptions = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTime.Now.AddMinutes(5),
+                Priority = CacheItemPriority.Normal,
+                SlidingExpiration = TimeSpan.FromMinutes(2)
+            };
+            _memoryCache.Set(cacheKey, ht,cacheExpiryOptions);
+        }
+        return Ok(ht);
+    }
+        
+
+    
+    [HttpGet]
+    [Route("[controller]/Temperature/Add")]
+    public async Task<IActionResult> AddTemperature(int temperatureC)
+    {
+        var cacheKey = "recentTemperature";
         await _iHomeConditionRepository.AddTemperature(temperatureC);
-        return await _iHomeConditionRepository.SaveChangesAsync() ? Ok(temperatureC) : BadRequest();
+
+        if (await _iHomeConditionRepository.SaveChangesAsync())
+        {
+            var cacheExpiryOptions = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTime.Now.AddMinutes(5),
+                Priority = CacheItemPriority.Normal,
+                SlidingExpiration = TimeSpan.FromMinutes(2)
+            };
+            _memoryCache.Set(cacheKey, temperatureC,cacheExpiryOptions);
+            return Ok(temperatureC);
+        }
+       
+        return NoContent();
     }
 }
