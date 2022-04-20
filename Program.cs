@@ -16,6 +16,7 @@ builder.Services.AddSqlite<SmartBuildingDb>(connectionString);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSignalR();
+builder.Services.AddMemoryCache();
 builder.Services.AddCors( options => {
    options.AddPolicy("CorsPolicy",builder => builder
    .WithOrigins("http://localhost:28096")
@@ -34,6 +35,7 @@ builder.Services.AddSwaggerGen(c =>
 
 //register own services
 builder.Services.AddScoped<IHomeConditionRepository, HomeConditionRepository>();
+builder.Services.AddScoped<IHomeLightRepository,HomeLightRepository>();
 
 var app = builder.Build();
 
@@ -44,9 +46,16 @@ app.UseSwaggerUI(c =>
    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Home API V1");
 });
 
- app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+var webSocketOptions = new WebSocketOptions
+{
+   KeepAliveInterval = TimeSpan.FromMinutes(2) // send ping every 2min to have connection assurance 
+};
+
+app.UseWebSockets(webSocketOptions);
 
 app.MapControllers();
 
@@ -70,5 +79,6 @@ app.MapPost("/householders/identify", async (SmartBuildingDb db, string code) =>
  await db.Homeholders.FirstAsync(hs => hs.IdentifyCode == code) != null);
 
 app.MapHub<HomeConditionHub>("/HomeConditionHub");
+app.MapHub<HomeLightHub>("/HomeLightHub");
 
 app.Run();
