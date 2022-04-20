@@ -11,7 +11,8 @@ public interface IHomeConditionRepository
 {
     public Task<IEnumerable<HomeTemperature>> GetTemperatures();
     public Task<IEnumerable<HomeTemperature>> GetTemperatures(DateTime start, DateTime stop);
-    public Task AddTemperature(HomeTemperature temperatureC);
+    public  Task AddTemperature(int temperatureC);
+    public Task<HomeTemperature> GetRecentTemperature();
 
     public Task<bool> SaveChangesAsync();
 }
@@ -19,8 +20,6 @@ public interface IHomeConditionRepository
 public class HomeConditionRepository : IHomeConditionRepository
 {
     private readonly SmartBuildingDb _context;
-    public static HomeTemperature Recent = new HomeTemperature(){TemperatureC = 22, MeasureDate = DateTime.Now};
-
     public HomeConditionRepository(SmartBuildingDb contextDb)
     {
         _context = contextDb;
@@ -31,14 +30,17 @@ public class HomeConditionRepository : IHomeConditionRepository
 
     public async Task<IEnumerable<HomeTemperature>> GetTemperatures(DateTime start, DateTime stop) => await _context.Temperatures.Where(t => t.MeasureDate >= start && t.MeasureDate <= stop).ToListAsync();
 
-    public async Task AddTemperature(HomeTemperature temperatureC)
+    public async Task AddTemperature(int temperatureC)
     {
-        temperatureC.Id = new smartBuilding.Helpers.IDGeneratorHelper().generateID();
-        temperatureC.MeasureDate = DateTime.Now;
-        await _context.Temperatures.AddAsync(temperatureC);
-        HomeConditionRepository.Recent = temperatureC;
+        HomeTemperature ht = new HomeTemperature(){
+            Id = new smartBuilding.Helpers.IDGeneratorHelper().generateID(),
+            TemperatureC = temperatureC,
+            MeasureDate = DateTime.Now,
+        };
+        await _context.Temperatures.AddAsync(ht);
     }
 
+    public async Task<HomeTemperature> GetRecentTemperature() => await _context.Temperatures.OrderBy(ht => ht.MeasureDate).LastOrDefaultAsync();
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0; 
