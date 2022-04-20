@@ -4,7 +4,8 @@ namespace smartBuilding.Models;
 
 public class HomeTemperature
 {
-    public int Id {get;set;}
+
+    public string Id {get;set;}
     private int _TemperatureC;
     public int TemperatureC
     {
@@ -17,7 +18,5 @@ public class HomeTemperature
             _TemperatureC = value;  
         }
     }
-           
-    private DateTime _MeasureDate = DateTime.Now;
     public DateTime MeasureDate {get;set;}
 }

@@ -19,7 +19,7 @@ public interface IHomeConditionRepository
 public class HomeConditionRepository : IHomeConditionRepository
 {
     private readonly SmartBuildingDb _context;
-    public static HomeTemperature Recent;
+    public static HomeTemperature Recent = new HomeTemperature(){TemperatureC = 22, MeasureDate = DateTime.Now};
 
     public HomeConditionRepository(SmartBuildingDb contextDb)
     {
@@ -33,6 +33,7 @@ public class HomeConditionRepository : IHomeConditionRepository
 
     public async Task AddTemperature(HomeTemperature temperatureC)
     {
+        temperatureC.Id = new smartBuilding.Helpers.IDGeneratorHelper().generateID();
         temperatureC.MeasureDate = DateTime.Now;
         await _context.Temperatures.AddAsync(temperatureC);
         HomeConditionRepository.Recent = temperatureC;
