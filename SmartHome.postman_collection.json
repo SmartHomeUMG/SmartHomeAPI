@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "0b88f73a-7722-477b-bcfc-4b495519a87e",
+		"name": "SmartHome",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "HomeCondition-Temperature",
+			"item": [
+				{
+					"name": "add sample",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"Id\":\"0\",\r\n        \"TemperatureC\":26\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5108/HomeCondition/Temperature",
+							"host": [
+								"localhost"
+							],
+							"port": "5108",
+							"path": [
+								"HomeCondition",
+								"Temperature"
+							]
+						},
+						"description": "project of filling tank system"
+					},
+					"response": []
+				},
+				{
+					"name": "get temperature during time",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5108/HomeCondition/GetTemperatureDuringTime?start=2022-04-01&&stop=2022-04-21",
+							"host": [
+								"localhost"
+							],
+							"port": "5108",
+							"path": [
+								"HomeCondition",
+								"GetTemperatureDuringTime"
+							],
+							"query": [
+								{
+									"key": "start",
+									"value": "2022-04-01"
+								},
+								{
+									"key": null,
+									"value": null
+								},
+								{
+									"key": "stop",
+									"value": "2022-04-21"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Recent temperature",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "HomeLight",
+			"item": [
+				{
+					"name": "change light status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"TurnedOn\":true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5108/HomeLight/ChangeLightStatus",
+							"host": [
+								"localhost"
+							],
+							"port": "5108",
+							"path": [
+								"HomeLight",
+								"ChangeLightStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "what's current light status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5108/HomeLight/GetLightStatus",
+							"host": [
+								"localhost"
+							],
+							"port": "5108",
+							"path": [
+								"HomeLight",
+								"GetLightStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "history",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
