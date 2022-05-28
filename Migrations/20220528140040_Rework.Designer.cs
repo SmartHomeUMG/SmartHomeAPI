@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using smartBuilding;
 
@@ -10,9 +11,10 @@ using smartBuilding;
 namespace smartBuilding.Migrations
 {
     [DbContext(typeof(SmartBuildingDb))]
-    partial class SmartBuildingDbModelSnapshot : ModelSnapshot
+    [Migration("20220528140040_Rework")]
+    partial class Rework
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
@@ -28,8 +30,7 @@ namespace smartBuilding.Migrations
                     b.Property<DateTime>("MeasureDate")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id")
-                        .HasName("PrimaryKey_HomeHumidityId");
+                    b.HasKey("Id");
 
                     b.ToTable("Humidities");
                 });
@@ -62,8 +63,7 @@ namespace smartBuilding.Migrations
                     b.Property<int>("WaterLevel")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id")
-                        .HasName("PrimaryKey_HomeWaterLevelId");
+                    b.HasKey("Id");
 
                     b.ToTable("WaterLevels");
                 });
