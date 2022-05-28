@@ -19,7 +19,7 @@ builder.Services.AddSignalR();
 builder.Services.AddMemoryCache();
 builder.Services.AddCors( options => {
    options.AddPolicy("CorsPolicy",builder => builder
-   .WithOrigins("http://localhost:28096")
+   .WithOrigins("192.168.100.132:28096")
    .AllowAnyHeader()
    .AllowAnyMethod()
    .AllowCredentials()
@@ -35,7 +35,6 @@ builder.Services.AddSwaggerGen(c =>
 
 //register own services
 builder.Services.AddScoped<IHomeConditionRepository, HomeConditionRepository>();
-builder.Services.AddScoped<IHomeLightRepository,HomeLightRepository>();
 
 var app = builder.Build();
 
@@ -63,22 +62,6 @@ app.MapGet("/", () => "Hello World!");
 
 app.MapGet("/temperatures/alarm", (int temperature) => temperature >= 40);
 
-app.MapPost("/homeholders/person/add", async (SmartBuildingDb db, Householders hs) =>{
-   await db.Homeholders.AddAsync(hs);
-   await db.SaveChangesAsync();
-   return Results.Accepted();
-});
-
-app.MapPost("/homeholders/group/add", async (SmartBuildingDb db, IEnumerable<Householders> hsList) => {
-   await db.Homeholders.AddRangeAsync(hsList);
-   await db.SaveChangesAsync();
-   return Results.Accepted();
-});
-
-app.MapPost("/householders/identify", async (SmartBuildingDb db, string code) => 
- await db.Homeholders.FirstAsync(hs => hs.IdentifyCode == code) != null);
-
 app.MapHub<HomeConditionHub>("/HomeConditionHub");
-app.MapHub<HomeLightHub>("/HomeLightHub");
 
 app.Run();
