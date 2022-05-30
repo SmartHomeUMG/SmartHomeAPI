@@ -32,4 +32,40 @@ public class HomeConditionHub : Hub
             }
         }
     }
+
+    public async IAsyncEnumerable<int> RecentHumidity( CancellationToken stopToken)
+    {
+        var cacheKey = "recentHumidity";
+        while(! stopToken.IsCancellationRequested)
+        {
+            _memoryCache.TryGetValue(cacheKey, out int recentHumidity);
+            yield return recentHumidity;
+            try
+            {
+                await Task.Delay(HomeConditionHub._RefrashDelay,stopToken);
+            }
+            catch(Exception)
+            {
+                yield break;
+            }
+        }
+    }
+
+    public async IAsyncEnumerable<int> RecentWaterLevel(CancellationToken stopToken)
+    {
+        var cacheKey = "recentWaterLevel";
+        while(! stopToken.IsCancellationRequested)
+        {
+            _memoryCache.TryGetValue(cacheKey, out int waterLevel);
+            yield return waterLevel;
+            try
+            {
+                await Task.Delay(HomeConditionHub._RefrashDelay,stopToken);
+            }
+            catch(Exception)
+            {
+                yield break;
+            }
+        }
+    }
 }
