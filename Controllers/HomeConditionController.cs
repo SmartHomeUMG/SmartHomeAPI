@@ -145,4 +145,7 @@ public class HomeConditionController : ControllerBase
     [Route("[controller]/WaterLevel/DuringTime")]
     public async Task<IEnumerable<HomeWaterLevel>> GetWaterLevelDuringTime(DateTime start, DateTime stop) => await _iHomeConditionRepository.GetWaterLevels(start,stop); 
 
+    [HttpGet]
+    [Route("[controller]/WaterLevel")]
+    public async Task<IEnumerable<HomeWaterLevel>> GetAllWaterLevels() => await _iHomeConditionRepository.GetWaterLevels();
 }
